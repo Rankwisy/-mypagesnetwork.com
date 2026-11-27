@@ -1,0 +1,75 @@
+---
+import type { QueryField } from "../../lib/tools/google.ts";
+
+const FIELDS: { key: QueryField; label: string; ph: string }[] = [
+  { key: "searchQuery", label: "Search query", ph: "e.g. running shoes" },
+  { key: "site", label: "site: (limit to a domain)", ph: "e.g. example.com" },
+  { key: "inTitle", label: "intitle: (word in the title)", ph: "e.g. review" },
+  { key: "inUrl", label: "inurl: (word in the URL)", ph: "e.g. blog" },
+  { key: "fileType", label: "filetype:", ph: "e.g. pdf" },
+  { key: "ext", label: "ext: (file extension)", ph: "e.g. xlsx" },
+  { key: "exactPhrase", label: "Exact phrase", ph: "e.g. write for us" },
+  { key: "exclude", label: "Exclude word", ph: "e.g. jobs" },
+  { key: "plus", label: "Must include (+)", ph: "e.g. 2026" },
+  { key: "or", label: "Any of these words (OR)", ph: "e.g. guide tutorial checklist" },
+  { key: "daterange", label: "daterange: (Julian dates)", ph: "e.g. 2460676-2461041" },
+  { key: "link", label: "link: (pages linking to)", ph: "e.g. example.com" },
+  { key: "inAnchor", label: "inanchor: (word in link text)", ph: "e.g. seo" },
+  { key: "allInAnchor", label: "allinanchor: (all words in link text)", ph: "e.g. best seo tools" },
+  { key: "inPostTitle", label: "inposttitle: (blog post titles)", ph: "e.g. link building" },
+  { key: "define", label: "define:", ph: "e.g. canonical" },
+  { key: "cache", label: "cache: (legacy)", ph: "e.g. example.com" },
+  { key: "backlink", label: "Backlink source (source target)", ph: "e.g. blog.com yourdomain.com" },
+];
+---
+<section class="tool" aria-labelledby="qb-h">
+  <h2 id="qb-h">Search Query Builder</h2>
+  <form id="qb" role="search" aria-label="Google operator query builder">
+    <div class="form-grid">
+      {FIELDS.map((f) => (
+        <div class="field">
+          <label for={`qb-${f.key}`}>{f.label}</label>
+          <input id={`qb-${f.key}`} name={f.key} type="text" placeholder={f.ph} autocomplete="off" />
+        </div>
+      ))}
+    </div>
+    <p class="out-label"><strong>Generated query</strong></p>
+    <output id="qb-out" aria-live="polite">Fill in any field to build a query.</output>
+    <div class="actions">
+      <button class="btn" type="submit">Search on Google</button>
+      <button class="btn secondary" type="button" id="qb-copy">Copy query</button>
+      <button class="btn secondary" type="reset">Clear</button>
+    </div>
+  </form>
+</section>
+
+<script>
+  import { buildQuery, queryUrl, QUERY_FIELDS, type QueryInput } from "../../lib/tools/google.ts";
+  const form = document.getElementById("qb") as HTMLFormElement;
+  const out = document.getElementById("qb-out") as HTMLOutputElement;
+  const copy = document.getElementById("qb-copy") as HTMLButtonElement;
+  const read = () => {
+    const f = new FormData(form);
+    const input: QueryInput = Object.fromEntries(QUERY_FIELDS.map((k) => [k, String(f.get(k) ?? "").trim()]));
+    return buildQuery(input);
+  };
+  const update = () => { out.textContent = read() || "Fill in any field to build a query."; };
+  form.addEventListener("input", update);
+  form.addEventListener("reset", () => setTimeout(update));
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const url = queryUrl(read());
+    if (url) window.open(url, "_blank", "noopener");
+  });
+  copy.addEventListener("click", async () => {
+    const q = read();
+    if (!q) return;
+    try {
+      await navigator.clipboard.writeText(q);
+      copy.textContent = "Copied";
+    } catch {
+      copy.textContent = "Copy failed, select the text";
+    }
+    setTimeout(() => (copy.textContent = "Copy query"), 2000);
+  });
+</script>

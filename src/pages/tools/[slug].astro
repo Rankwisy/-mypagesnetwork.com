@@ -1,0 +1,75 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Faq from "../../components/Faq.astro";
+import GoogleSearchSimulator from "../../components/tools/GoogleSearchSimulator.astro";
+import SearchQueryBuilder from "../../components/tools/SearchQueryBuilder.astro";
+import AdsAbTest from "../../components/tools/AdsAbTest.astro";
+import { softwareApp, faqPage } from "../../lib/schema.ts";
+import { isearchtrends, MARKETS } from "../../data/nav.ts";
+
+// English routes only. For /fr/, /es/, /nl/ add src/pages/[lang]/tools/[slug].astro
+// that filters tools by data.lang and passes `alternates` to Base for hreflang.
+export async function getStaticPaths() {
+  const tools = await getCollection("tools", (t) => t.data.lang === "en");
+  return tools.map((entry) => ({ params: { slug: entry.data.slug }, props: { entry } }));
+}
+
+const COMPONENTS = { GoogleSearchSimulator, SearchQueryBuilder, AdsAbTest };
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const services = await getCollection("services");
+const upsell = services.find((s) => s.id === d.upsellService);
+if (!upsell) throw new Error(`Tool "${d.slug}" upsells unknown service "${d.upsellService}"`);
+const Tool = d.component ? COMPONENTS[d.component] : null;
+const path = `/tools/${d.slug}/`;
+const ist = isearchtrends(d.slug);
+const shortName = d.h1.split(":")[0];
+---
+<Base
+  title={d.title}
+  description={d.description}
+  crumbs={[{ name: "Home", path: "/" }, { name: "Free SEO tools", path: "/tools/" }, { name: shortName, path }]}
+  schema={[softwareApp(shortName, d.description, path), faqPage(d.faq)]}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="kicker">{d.tier === "native" ? "Free tool · runs in your browser" : "Free tool · live data on Isearchtrends"}</p>
+      <h1>{d.h1}</h1>
+      <p class="lead">{d.description}</p>
+      {d.tier === "landing" && (
+        <div class="actions"><a class="btn" href={ist}>Run it on Isearchtrends</a></div>
+      )}
+    </header>
+
+    {Tool && <Tool />}
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    {d.tier === "landing" && (
+      <section class="section" aria-labelledby="markets">
+        <h2 id="markets">Markets covered</h2>
+        <p>{MARKETS.length} markets, each with its own local Google index: {MARKETS.join(", ")}.</p>
+        <a class="btn" href={ist}>Run it on Isearchtrends</a>
+      </section>
+    )}
+
+    <div class="upsells">
+      <div class="card">
+        <span class="tag">Want us to fix it?</span>
+        <h3><a href={`/services/${upsell.id}/`}>{upsell.data.name}</a></h3>
+        <p>{upsell.data.summary}</p>
+      </div>
+      <div class="card">
+        <span class="tag">Go deeper with live data</span>
+        <h3><a href={ist}>Isearchtrends SEO tool</a></h3>
+        <p>Keyword volumes, live SERPs, domain traffic and backlinks across 20 markets, from our sister platform.</p>
+      </div>
+    </div>
+
+    <Faq items={d.faq} />
+  </div>
+</Base>

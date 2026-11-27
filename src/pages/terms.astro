@@ -1,0 +1,41 @@
+---
+import Base from "../layouts/Base.astro";
+import { company } from "../data/company.ts";
+---
+<Base
+  title="Terms of Service | MYPAGES L.L.C."
+  description="Terms for using mypagesnetwork.com and its free SEO tools, and how engagements with MYPAGES L.L.C. are contracted."
+  crumbs={[{ name: "Home", path: "/" }, { name: "Terms of service", path: "/terms/" }]}
+>
+  <div class="wrap prose">
+    <header class="page-head">
+      <h1>Terms of service</h1>
+      <p class="muted">These terms apply to the use of {company.domain.replace("https://", "")}, published by {company.legalName}.</p>
+    </header>
+
+    <h2>Use of the website</h2>
+    <p>You may browse this site and use its free tools for personal or business purposes. Do not use them to overload, scrape or interfere with this site or with third-party services.</p>
+
+    <h2>Free tools</h2>
+    <p>
+      The free tools build links to public Google pages or send you to our sister platform Isearchtrends. They are provided as is, without warranty. Google results vary with time, location and personalisation, so treat what you see as an indication, not a guarantee. Your use of Google and Isearchtrends is governed by their own terms.
+    </p>
+
+    <h2>Services</h2>
+    <p>
+      Paid work is governed by a written proposal or statement of work that sets scope, price, timeline and payment terms. Where that document and these terms differ, the proposal wins. Search rankings depend on third parties, so we commit to the work and its quality, not to a specific ranking position.
+    </p>
+
+    <h2>Intellectual property</h2>
+    <p>The text, design and code of this site belong to {company.legalName} unless stated otherwise. You may quote short extracts with a link to the source page.</p>
+
+    <h2>Liability</h2>
+    <p>To the extent permitted by law, {company.legalName} is not liable for indirect or consequential loss arising from use of this site or its free tools.</p>
+
+    <h2>Governing law</h2>
+    <p>These terms are governed by the laws of the State of Wyoming, USA, without prejudice to mandatory consumer protections in your country of residence.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about these terms: <a href={`mailto:${company.email}`}>{company.email}</a>. Company details are on the <a href="/legal/">legal notice</a>.</p>
+  </div>
+</Base>

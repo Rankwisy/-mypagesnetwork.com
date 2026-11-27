@@ -1,0 +1,15 @@
+---
+const {
+  heading = "Get a data-backed plan for your site",
+  text = "Tell us what you sell and where you want to rank. You get a written reply with what we would fix first and what it should be worth.",
+  href = "/contact/",
+  label = "Request a proposal",
+} = Astro.props;
+---
+<section class="cta-band">
+  <div class="wrap">
+    <h2>{heading}</h2>
+    <p>{text}</p>
+    <a class="btn" href={href}>{label}</a>
+  </div>
+</section>

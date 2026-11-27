@@ -1,0 +1,56 @@
+---
+// <!-- REVIEW BY LAWYER -->
+import Base from "../layouts/Base.astro";
+import { company, officeOneLine } from "../data/company.ts";
+const updated = "2026-11-27";
+---
+<Base
+  title="Privacy Policy | MYPAGES L.L.C."
+  description="How MYPAGES L.L.C. handles personal data: contact form data, Netlify as processor, no cookies, your GDPR and US privacy rights."
+  crumbs={[{ name: "Home", path: "/" }, { name: "Privacy policy", path: "/privacy/" }]}
+>
+  <div class="wrap prose">
+    <header class="page-head">
+      <h1>Privacy policy</h1>
+      <p class="muted">Last updated {updated}</p>
+    </header>
+
+    <h2>Data controller</h2>
+    <p>{company.legalName}, {officeOneLine}. Contact: <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
+
+    <h2>What we collect</h2>
+    <p>
+      We only collect what you send us through the contact form: your name, email address, website URL, the service you are interested in, a budget range and your message. We use it to answer your request and, if we work together, to manage that relationship.
+    </p>
+    <p>
+      The free tools run entirely in your browser. What you type into them is not sent to us; when you open a result, your browser goes straight to Google, whose own privacy policy then applies.
+    </p>
+
+    <h2>Legal basis</h2>
+    <p>
+      Under the EU and UK GDPR we process contact form data on the basis of steps taken at your request before entering into a contract (Art. 6(1)(b)) and our legitimate interest in answering business enquiries (Art. 6(1)(f)).
+    </p>
+
+    <h2>Processors</h2>
+    <p>
+      Netlify, Inc. (San Francisco, CA, USA) hosts this website and receives contact form submissions on our behalf. Netlify processes data under its data processing agreement, which includes Standard Contractual Clauses for transfers from the EU and UK to the US. Netlify keeps standard server logs, such as IP address and request time, for security and operation of the service.
+    </p>
+
+    <h2>Cookies and analytics</h2>
+    <p>
+      This site sets no cookies and uses no advertising or cross-site tracking. If we enable analytics, it will be a cookieless, aggregate service that does not store personal data or identify individual visitors, and this policy will name it.
+    </p>
+
+    <h2>Retention</h2>
+    <p>We keep enquiries that do not lead to a contract for up to 24 months, then delete them. Client records are kept as long as required by law.</p>
+
+    <h2>Your rights</h2>
+    <p>
+      If you are in the EU or UK you can ask for access to, correction or deletion of your data, restriction of or objection to processing, and data portability. You can also complain to your local data protection authority. If you are a US resident, including in states with consumer privacy laws such as California, you can ask what personal information we hold about you and ask us to delete or correct it. We do not sell or share personal information for targeted advertising.
+    </p>
+    <p>Send any request to <a href={`mailto:${company.email}`}>{company.email}</a>. We reply within 30 days.</p>
+
+    <h2>Changes</h2>
+    <p>We will update this page if our practices change and show the date of the last update at the top.</p>
+  </div>
+</Base>

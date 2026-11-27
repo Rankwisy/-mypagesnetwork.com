@@ -1,0 +1,104 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Faq from "../../components/Faq.astro";
+import Cta from "../../components/Cta.astro";
+import { service, faqPage } from "../../lib/schema.ts";
+
+export async function getStaticPaths() {
+  const services = await getCollection("services");
+  return services.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const all = await getCollection("services");
+const related = d.related.map((id) => {
+  const s = all.find((x) => x.id === id);
+  if (!s) throw new Error(`Service "${entry.id}" links to unknown service "${id}"`);
+  return s;
+});
+const tools = await getCollection("tools");
+const tool = tools.find((t) => t.data.slug === d.tool);
+if (!tool) throw new Error(`Service "${entry.id}" links to unknown tool "${d.tool}"`);
+
+const path = `/services/${entry.id}/`;
+const price = (v: string) => (v === "TBD" ? "Price on request" : `From ${v}`);
+const models = [
+  { name: "Audit", price: d.priceFrom.audit, text: "A fixed-scope diagnosis with a prioritised action list your team can execute." },
+  { name: "Project", price: d.priceFrom.project, text: "We scope, build and ship the work end to end, with a fixed price and timeline." },
+  { name: "Monthly retainer", price: d.priceFrom.retainer, text: "Ongoing execution and reporting, reviewed against agreed KPIs every month." },
+];
+---
+<Base
+  title={d.title}
+  description={d.description}
+  crumbs={[{ name: "Home", path: "/" }, { name: "Services", path: "/services/" }, { name: d.name, path }]}
+  schema={[service(d.name, d.description, path), faqPage(d.faq)]}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="kicker">{d.name}</p>
+      <h1>{d.h1}</h1>
+      <p class="lead">{d.summary}</p>
+      <div class="actions">
+        <a class="btn" href={`/contact/?service=${entry.id}`}>Request a proposal</a>
+        <a class="btn secondary" href={`/tools/${tool.data.slug}/`}>Try the free {tool.data.h1.split(":")[0]}</a>
+      </div>
+    </header>
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    <section class="section" aria-labelledby="deliverables">
+      <h2 id="deliverables">What you get</h2>
+      <ul class="checks prose">{d.deliverables.map((x) => <li>{x}</li>)}</ul>
+    </section>
+
+    <section class="section" aria-labelledby="process">
+      <h2 id="process">How the work runs</h2>
+      <ol class="steps">{d.process.map((p) => <li><h3>{p.title}</h3><p>{p.text}</p></li>)}</ol>
+    </section>
+
+    <section class="section" aria-labelledby="for-who">
+      <h2 id="for-who">Who it is for</h2>
+      <ul class="checks prose">{d.audience.map((x) => <li>{x}</li>)}</ul>
+    </section>
+
+    <section class="section" aria-labelledby="models">
+      <h2 id="models">Engagement models</h2>
+      <div class="models">
+        {models.map((m) => (
+          <div class="card">
+            <h3>{m.name}</h3>
+            <p><strong>{price(m.price)}</strong></p>
+            <p>{m.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="related">
+      <h2 id="related">Related services and tools</h2>
+      <div class="grid">
+        {related.map((r) => (
+          <div class="card">
+            <span class="tag">Service</span>
+            <h3><a href={`/services/${r.id}/`}>{r.data.name}</a></h3>
+            <p>{r.data.summary}</p>
+          </div>
+        ))}
+        <div class="card">
+          <span class="tag">Free tool</span>
+          <h3><a href={`/tools/${tool.data.slug}/`}>{tool.data.h1.split(":")[0]}</a></h3>
+          <p>{tool.data.cardText}</p>
+        </div>
+      </div>
+    </section>
+
+    <Faq items={d.faq} />
+  </div>
+  <Cta heading={`Talk to us about ${d.name.toLowerCase()}`} href={`/contact/?service=${entry.id}`} />
+</Base>

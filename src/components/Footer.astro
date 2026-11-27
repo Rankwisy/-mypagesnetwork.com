@@ -1,0 +1,39 @@
+---
+import { company, officeOneLine, phoneHref } from "../data/company.ts";
+import { getCollection } from "astro:content";
+const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <p class="wordmark light">MY<span>PAGES</span></p>
+      <p>Data-driven SEO for e-commerce and online businesses.</p>
+      <p><a href={`mailto:${company.email}`}>{company.email}</a><br /><a href={phoneHref}>{company.phone}</a></p>
+    </div>
+    <nav aria-label="Services">
+      <p class="footer-h">Services</p>
+      <ul>{services.map((s) => <li><a href={`/services/${s.id}/`}>{s.data.name}</a></li>)}</ul>
+    </nav>
+    <nav aria-label="Company">
+      <p class="footer-h">Company</p>
+      <ul>
+        <li><a href="/tools/">Free SEO tools</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/legal/">Legal notice</a></li>
+        <li><a href="/privacy/">Privacy policy</a></li>
+        <li><a href="/terms/">Terms of service</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Ecosystem">
+      <p class="footer-h">Ecosystem</p>
+      <ul>{company.ecosystem.map((e) => <li><a href={e.url}>{e.name}</a></li>)}</ul>
+    </nav>
+  </div>
+  <div class="wrap legal-line">
+    <p>
+      © {year} {company.legalName} · Wyoming LLC · Entity ID {company.stateEntityId} · Registered office: {officeOneLine} · <a href="/legal/">Legal notice</a>
+    </p>
+  </div>
+</footer>

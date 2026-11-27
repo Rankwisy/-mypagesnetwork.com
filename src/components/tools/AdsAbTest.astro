@@ -1,0 +1,115 @@
+---
+import { AD_COUNTRIES, DEVICES, HEADLINE_MAX, DESCRIPTION_MAX } from "../../lib/tools/google.ts";
+const VARIATIONS = 3;
+const TESTS = 3;
+---
+<section class="tool" aria-labelledby="ab-h">
+  <h2 id="ab-h">Google Ads Preview and A/B Test</h2>
+  <form id="ab" aria-label="Google Ads A/B test configuration">
+    <h3>Ad variations</h3>
+    {Array.from({ length: VARIATIONS }, (_, i) => (
+      <fieldset class="var-block">
+        <legend><strong>Variation {String.fromCharCode(65 + i)}</strong></legend>
+        <div class="field">
+          <label for={`ab-h${i}`}>Headline <span class="counter" data-for={`ab-h${i}`}>0/{HEADLINE_MAX}</span></label>
+          <input id={`ab-h${i}`} name={`h${i}`} maxlength={HEADLINE_MAX} placeholder="e.g. Running Shoes 40% Off" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for={`ab-d${i}`}>Description <span class="counter" data-for={`ab-d${i}`}>0/{DESCRIPTION_MAX}</span></label>
+          <input id={`ab-d${i}`} name={`d${i}`} maxlength={DESCRIPTION_MAX} placeholder="e.g. Free returns. Ships in 24h." autocomplete="off" />
+        </div>
+      </fieldset>
+    ))}
+
+    <h3>Test configurations</h3>
+    <div class="form-grid">
+      {Array.from({ length: TESTS }, (_, i) => (
+        <fieldset class="var-block">
+          <legend><strong>Test {i + 1}</strong></legend>
+          <div class="field">
+            <label for={`ab-l${i}`}>Location</label>
+            <select id={`ab-l${i}`} name={`l${i}`}>
+              <option value="">Not used</option>
+              {AD_COUNTRIES.map(([c, n]) => <option value={c} selected={i === 0 && c === "US"}>{n}</option>)}
+            </select>
+          </div>
+          <div class="field">
+            <label for={`ab-v${i}`}>Device</label>
+            <select id={`ab-v${i}`} name={`v${i}`}>{DEVICES.map((d) => <option value={d}>{d[0].toUpperCase() + d.slice(1)}</option>)}</select>
+          </div>
+        </fieldset>
+      ))}
+    </div>
+  </form>
+
+  <h3>Test matrix</h3>
+  <p class="hint">Each cell opens the live Google results page for that headline in that market, so you can see which ads and listings yours would compete with. Device is a label for your notes: switch your browser to device emulation for mobile layouts.</p>
+  <div class="table-scroll" id="ab-matrix" aria-live="polite"><p class="hint">Write at least one headline to build the matrix.</p></div>
+  <div class="actions"><button class="btn" type="button" id="ab-all" disabled>Open all tests</button></div>
+</section>
+
+<script>
+  import { adMatrix, AD_COUNTRIES, type AdVariation, type AdTest } from "../../lib/tools/google.ts";
+  const form = document.getElementById("ab") as HTMLFormElement;
+  const box = document.getElementById("ab-matrix") as HTMLElement;
+  const all = document.getElementById("ab-all") as HTMLButtonElement;
+  const country = (c: string) => AD_COUNTRIES.find(([k]) => k === c)?.[1] ?? c;
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, text = "") => {
+    const n = document.createElement(tag);
+    n.textContent = text;
+    return n;
+  };
+
+  const read = () => {
+    const f = new FormData(form);
+    const get = (k: string) => String(f.get(k) ?? "").trim();
+    const variations: AdVariation[] = [0, 1, 2].map((i) => ({ headline: get(`h${i}`), description: get(`d${i}`) }));
+    const tests: AdTest[] = [0, 1, 2].map((i) => ({ location: get(`l${i}`), device: get(`v${i}`) })).filter((t) => t.location);
+    return { variations, tests };
+  };
+
+  const render = () => {
+    form.querySelectorAll<HTMLElement>(".counter").forEach((c) => {
+      const input = document.getElementById(c.dataset.for!) as HTMLInputElement;
+      c.textContent = `${input.value.length}/${input.maxLength}`;
+    });
+    const { variations, tests } = read();
+    const cells = adMatrix(variations, tests);
+    all.disabled = cells.length === 0;
+    if (!cells.length) {
+      box.replaceChildren(el("p", "Write at least one headline and pick a location to build the matrix."));
+      return;
+    }
+    const table = el("table");
+    table.className = "matrix";
+    const head = el("tr");
+    head.append(el("th", "Ad variation"), ...tests.map((t) => el("th", `${country(t.location)} · ${t.device}`)));
+    table.append(head);
+    variations.forEach((v, vi) => {
+      if (!v.headline) return;
+      const row = el("tr");
+      const label = el("td");
+      label.append(el("strong", v.headline), el("br"), document.createTextNode(v.description));
+      row.append(label);
+      cells.filter((c) => c.variation === vi).forEach((c) => {
+        const td = el("td");
+        const a = el("a", "Open test");
+        a.href = c.url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        td.append(a);
+        row.append(td);
+      });
+      table.append(row);
+    });
+    box.replaceChildren(table);
+  };
+
+  form.addEventListener("input", render);
+  all.addEventListener("click", () => {
+    // Browsers may block all but the first tab; the matrix links always work.
+    const { variations, tests } = read();
+    adMatrix(variations, tests).forEach((c) => window.open(c.url, "_blank", "noopener"));
+  });
+  render();
+</script>

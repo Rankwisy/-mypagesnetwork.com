@@ -1,0 +1,43 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Cta from "../../components/Cta.astro";
+const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
+---
+<Base
+  title="SEO Services for E-commerce and SMBs | MYPAGES"
+  description="Technical audits, e-commerce, local, programmatic and AI search SEO, link building, domain strategy and consulting. Audit, project or monthly retainer."
+  crumbs={[{ name: "Home", path: "/" }, { name: "Services", path: "/services/" }]}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>SEO services built around revenue</h1>
+      <p class="lead">
+        Every engagement starts with your data and ends with a measurable change in organic sessions, rankings or orders. Pick a single service or combine them; most clients start with a technical audit and move to a retainer once the priorities are clear.
+      </p>
+    </header>
+    <div class="grid">
+      {services.map((s) => (
+        <div class="card">
+          <h2 class="h3-size"><a href={`/services/${s.id}/`}>{s.data.name}</a></h2>
+          <p>{s.data.summary}</p>
+        </div>
+      ))}
+    </div>
+    <section class="section">
+      <h2>Three ways to work with us</h2>
+      <div class="models">
+        <div class="card"><h3>Audit</h3><p>Fixed scope and fixed price. You get a ranked action list, the evidence behind each item and a walkthrough call.</p></div>
+        <div class="card"><h3>Project</h3><p>A defined build: a category restructure, a programmatic page set, a migration. Scoped, priced and delivered against a timeline.</p></div>
+        <div class="card"><h3>Monthly retainer</h3><p>Ongoing execution and reporting with agreed KPIs, reviewed each month. Cancel with 30 days notice.</p></div>
+      </div>
+    </section>
+  </div>
+  <Cta />
+</Base>
+
+<style>
+  .h3-size { font-size: 1.2rem; margin: 0 0 0.5rem; }
+  .h3-size a { color: var(--navy); text-decoration: none; }
+  .h3-size a::after { content: ""; position: absolute; inset: 0; }
+</style>

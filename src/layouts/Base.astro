@@ -1,0 +1,74 @@
+---
+import { Font } from "astro:assets";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import { organization, website, breadcrumbs as crumbLd, abs, type Crumb } from "../lib/schema.ts";
+import { company } from "../data/company.ts";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  noindex?: boolean;
+  schema?: object[];
+  crumbs?: Crumb[];
+  lang?: string;
+  // Future /fr/, /es/, /nl/ versions: [{ lang: "fr", path: "/fr/tools/..." }]
+  alternates?: { lang: string; path: string }[];
+}
+
+const { title, description, ogImage = "/og-default.png", noindex = false, schema = [], crumbs, lang = "en", alternates = [] } = Astro.props;
+const canonical = abs(Astro.url.pathname);
+const og = abs(ogImage);
+const graph = {
+  "@context": "https://schema.org",
+  "@graph": [organization(), website(), ...schema, ...(crumbs ? [crumbLd(crumbs)] : [])],
+};
+const plausible = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
+    {alternates.length > 0 && [{ lang, path: Astro.url.pathname }, ...alternates].map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
+    <Font cssVariable="--font-sans" preload={[{ weight: "400" }]} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0b1f3a" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={company.brand} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+    {plausible && <script defer data-domain={plausible} src="https://plausible.io/js/script.js"></script>}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      {crumbs && <Breadcrumbs items={crumbs} />}
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

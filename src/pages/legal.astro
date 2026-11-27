@@ -1,0 +1,65 @@
+---
+import Base from "../layouts/Base.astro";
+import { company, officeOneLine, phoneHref } from "../data/company.ts";
+const rows: [string, string][] = [
+  ["Legal name", company.legalName],
+  ["Trading name", company.brand],
+  ["Entity type", company.entityType],
+  ["Jurisdiction", company.jurisdiction],
+  ["State entity ID", company.stateEntityId],
+  ["Formation date", company.formationDate],
+  ["Registered agent", company.registeredAgent],
+  ["Registered office", officeOneLine],
+  ["Managing member", company.managingMember],
+  ...(company.ein ? [["EIN", company.ein] as [string, string]] : []),
+];
+---
+<Base
+  title="Legal Notice and Imprint | MYPAGES L.L.C."
+  description="Legal notice for mypagesnetwork.com: company registration, registered office, contact details, UK affiliate and hosting provider."
+  crumbs={[{ name: "Home", path: "/" }, { name: "Legal notice", path: "/legal/" }]}
+>
+  <div class="wrap prose">
+    <header class="page-head">
+      <h1>Legal notice</h1>
+      <p class="lead">Information about the publisher of {company.domain.replace("https://", "")}.</p>
+    </header>
+
+    <h2>Publisher</h2>
+    <table class="kv">
+      <tbody>{rows.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}</tbody>
+    </table>
+
+    <h2>Contact</h2>
+    <table class="kv">
+      <tbody>
+        <tr><th scope="row">Email</th><td><a href={`mailto:${company.email}`}>{company.email}</a></td></tr>
+        <tr><th scope="row">Phone</th><td><a href={phoneHref}>{company.phone}</a></td></tr>
+        <tr><th scope="row">Website</th><td>{company.domain}</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Affiliated company</h2>
+    {company.affiliates.map((a) => (
+      <table class="kv">
+        <tbody>
+          <tr><th scope="row">Legal name</th><td>{a.legalName}</td></tr>
+          <tr><th scope="row">Jurisdiction</th><td>{a.jurisdiction}</td></tr>
+          <tr><th scope="row">Company number</th><td>{a.companyNumber}</td></tr>
+          <tr><th scope="row">Registered office</th><td>{a.registeredOffice}</td></tr>
+        </tbody>
+      </table>
+    ))}
+
+    <h2>Related brands</h2>
+    <ul>{company.ecosystem.map((e) => <li><a href={e.url}>{e.name}</a></li>)}</ul>
+
+    <h2>Hosting</h2>
+    <p>This website is hosted by Netlify, Inc., San Francisco, California, USA (netlify.com).</p>
+
+    <h2>Liability and content</h2>
+    <p>
+      Content on this site is provided for general information. We check it carefully but cannot guarantee it is complete or current. External links are checked when published; we are not responsible for the content of third-party sites. Free tools open public Google pages and are provided as is. See the <a href="/terms/">terms of service</a> and the <a href="/privacy/">privacy policy</a>.
+    </p>
+  </div>
+</Base>

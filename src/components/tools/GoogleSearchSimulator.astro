@@ -1,0 +1,62 @@
+---
+import { COUNTRIES, LANGUAGES, DEVICES } from "../../lib/tools/google.ts";
+---
+<section class="tool" aria-labelledby="sim-h">
+  <h2 id="sim-h">Google Search Simulator</h2>
+  <form id="sim" role="search" aria-label="Google search simulator">
+    <div class="field">
+      <label for="sim-q">Search query</label>
+      <input id="sim-q" name="q" type="search" required placeholder="e.g. running shoes" autocomplete="off" />
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="sim-gl">Country ({COUNTRIES.length})</label>
+        <select id="sim-gl" name="gl">{COUNTRIES.map(([c, n]) => <option value={c}>{n}</option>)}</select>
+      </div>
+      <div class="field">
+        <label for="sim-hl">Interface language</label>
+        <select id="sim-hl" name="hl">{LANGUAGES.map(([c, n]) => <option value={c}>{n}</option>)}</select>
+      </div>
+      <div class="field">
+        <label for="sim-device">Device</label>
+        <select id="sim-device" name="device">{DEVICES.map((d) => <option value={d}>{d[0].toUpperCase() + d.slice(1)}</option>)}</select>
+      </div>
+      <div class="field">
+        <label for="sim-num">Results per page</label>
+        <select id="sim-num" name="num">{[10, 20, 50, 100].map((n) => <option value={n}>{n}</option>)}</select>
+      </div>
+    </div>
+    <div class="field"><label class="check"><input type="checkbox" name="safe" /> SafeSearch on</label></div>
+    <p class="hint" id="sim-device-hint" hidden>Google picks the layout from your browser, not the URL. For a true mobile or tablet SERP, open the result with your browser's device emulation (F12, then the device toolbar).</p>
+    <p class="out-label"><strong>Generated URL</strong></p>
+    <output id="sim-out" aria-live="polite">Type a query to build the URL.</output>
+    <div class="actions"><button class="btn" type="submit">Open in Google</button></div>
+  </form>
+</section>
+
+<script>
+  import { simulatorUrl } from "../../lib/tools/google.ts";
+  const form = document.getElementById("sim") as HTMLFormElement;
+  const out = document.getElementById("sim-out") as HTMLOutputElement;
+  const hint = document.getElementById("sim-device-hint") as HTMLElement;
+  const read = () => {
+    const f = new FormData(form);
+    return simulatorUrl({
+      q: String(f.get("q") ?? ""),
+      gl: String(f.get("gl")),
+      hl: String(f.get("hl")),
+      num: Number(f.get("num")),
+      safe: f.get("safe") === "on",
+    });
+  };
+  const update = () => {
+    out.textContent = read() ?? "Type a query to build the URL.";
+    hint.hidden = new FormData(form).get("device") === "desktop";
+  };
+  form.addEventListener("input", update);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const url = read();
+    if (url) window.open(url, "_blank", "noopener");
+  });
+</script>

@@ -1,0 +1,47 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import { company } from "../data/company.ts";
+---
+<Base
+  title="About MYPAGES: SEO Practitioners Since 2009"
+  description="MYPAGES is an SEO and search data consultancy. Hands-on SEO since 2009, consulting since 2011, for EU and US clients in five languages."
+  crumbs={[{ name: "Home", path: "/" }, { name: "About", path: "/about/" }]}
+>
+  <div class="wrap prose">
+    <header class="page-head">
+      <h1>About MYPAGES</h1>
+      <p class="lead">A small, senior SEO consultancy. The person who audits your site is the person who explains it to you and the person who does the work.</p>
+    </header>
+
+    <h2>Background</h2>
+    <ul class="stats">
+      <li><strong>2009</strong>Started practising SEO on our own sites and client projects.</li>
+      <li><strong>2011</strong>Began working as a freelance SEO consultant.</li>
+      <li><strong>{company.formationDate.slice(0, 4)}</strong>{company.legalName} formed in {company.jurisdiction}.</li>
+      <li><strong>5 languages</strong>English, French, Spanish, Arabic and Dutch.</li>
+    </ul>
+
+    <h2>What we do</h2>
+    <p>
+      We work on search visibility for online stores and small and mid-sized businesses: technical SEO, catalogue and category structure, local search, programmatic page sets, links, domains and, increasingly, visibility inside AI answers from Google, ChatGPT and Perplexity. The full list is on the <a href="/services/">services page</a>.
+    </p>
+    <p>
+      Clients are spread across the EU and the US. A large share of the work is multilingual: the same catalogue sold in France, Belgium, Spain and the Netherlands, each with its own Google, its own competitors and its own search habits. Working natively in those languages means keyword research and content are judged by someone who reads the results, not a translation of them.
+    </p>
+
+    <h2>How we think about SEO</h2>
+    <p>
+      SEO is a revenue channel, so it gets measured like one. We start from Search Console, analytics and order data, estimate what each fix is worth, and do the valuable work first. We do not sell ranking guarantees, and we do not pad reports with metrics that do not connect to traffic or sales.
+    </p>
+    <p>
+      We also build tools. Our sister platform <a href="https://isearchtrends.com">Isearchtrends</a> provides keyword, SERP, domain and backlink data across 20 markets, and several of its browser tools are available free on our <a href="/tools/">tools page</a>.
+    </p>
+
+    <h2>The group</h2>
+    <p>
+      {company.legalName} is a {company.entityType}. It operates alongside its UK affiliate {company.affiliates[0].legalName} and the brands {company.ecosystem.map((e) => e.name).join(", ")}. Full registration details are on the <a href="/legal/">legal notice</a>.
+    </p>
+  </div>
+  <Cta />
+</Base>

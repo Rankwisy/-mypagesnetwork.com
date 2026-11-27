@@ -1,0 +1,81 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import { company } from "../data/company.ts";
+
+const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
+const native = (await getCollection("tools", (t) => t.data.tier === "native")).sort((a, b) => a.data.order - b.data.order);
+const yearsSince2009 = new Date().getFullYear() - 2009;
+---
+<Base
+  title="Data-Driven SEO for E-commerce | MYPAGES"
+  description="Technical, e-commerce, local and programmatic SEO for online stores and SMBs. Audits, projects and retainers tied to revenue, not vanity metrics."
+>
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">SEO and search data consulting</p>
+      <h1>Data-driven SEO for e-commerce and online businesses</h1>
+      <p class="lead">
+        We find the pages, queries and technical faults that sit between your catalogue and the revenue it should earn from search, then fix them in the order that pays back fastest.
+      </p>
+      <div class="actions">
+        <a class="btn" href="/contact/">Request a proposal</a>
+        <a class="btn secondary" href="/services/technical-seo-audit/">Start with an audit</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="services-h">
+    <h2 id="services-h">Services</h2>
+    <p class="muted prose">Ten services, one method: measure first, prioritise by expected revenue, ship, then measure again.</p>
+    <div class="grid">
+      {services.map((s) => (
+        <div class="card">
+          <h3><a href={`/services/${s.id}/`}>{s.data.name}</a></h3>
+          <p>{s.data.summary}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="how-h">
+    <div class="wrap">
+      <h2 id="how-h">How we work</h2>
+      <ol class="steps">
+        <li><h3>Baseline</h3><p>We pull Search Console, analytics, crawl and revenue data into one view, so every recommendation starts from a number you already trust.</p></li>
+        <li><h3>Prioritise</h3><p>Each issue gets an estimated traffic and revenue impact and an effort score. You see the ranked list before anything is built.</p></li>
+        <li><h3>Ship</h3><p>We implement directly or write tickets your developers can close without a meeting: exact URLs, exact changes, acceptance criteria.</p></li>
+        <li><h3>Measure</h3><p>Changes are annotated and tracked against the baseline. Monthly reports show what moved, what did not, and what we do next.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="tools-h">
+    <h2 id="tools-h">Free SEO tools</h2>
+    <p class="muted prose">Browser-based tools we use every week. No account, no tracking.</p>
+    <div class="grid">
+      {native.map((t) => (
+        <div class="card">
+          <span class="tag">Free tool</span>
+          <h3><a href={`/tools/${t.data.slug}/`}>{t.data.h1.split(":")[0]}</a></h3>
+          <p>{t.data.cardText}</p>
+        </div>
+      ))}
+    </div>
+    <p><a href="/tools/">See all free SEO tools</a></p>
+  </section>
+
+  <section class="wrap section" aria-labelledby="trust-h">
+    <h2 id="trust-h">Who you are dealing with</h2>
+    <ul class="stats">
+      <li><strong>Since 2009</strong>{yearsSince2009}+ years of hands-on SEO, consulting since 2011.</li>
+      <li><strong>{company.legalName}</strong>{company.entityType.split(" (")[0]}, Entity ID {company.stateEntityId}.</li>
+      <li><strong>EU and US clients</strong>Work delivered in English, French, Spanish, Arabic and Dutch.</li>
+      <li><strong>Own data stack</strong>Live keyword, SERP and backlink data through our <a href="https://isearchtrends.com">Isearchtrends</a> platform.</li>
+    </ul>
+    <p><a href="/about/">More about how we work and who we are</a> · <a href="/legal/">Legal notice</a></p>
+  </section>
+
+  <Cta />
+</Base>
