@@ -1,0 +1,7 @@
+---
+// Numbered horizontal steps. Use only for real sequences.
+const { steps, years = false } = Astro.props as { steps: { title: string; text: string }[]; years?: boolean };
+---
+<ol class:list={["timeline", { years }]}>
+  {steps.map((s) => <li><h3>{s.title}</h3><p>{s.text}</p></li>)}
+</ol>

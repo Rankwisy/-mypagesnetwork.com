@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import Doc from "../components/Doc.astro";
 import { company } from "../data/company.ts";
 ---
 <Base
@@ -7,11 +8,13 @@ import { company } from "../data/company.ts";
   description="Terms for using mypagesnetwork.com and its free SEO tools, and how engagements with MYPAGES L.L.C. are contracted."
   crumbs={[{ name: "Home", path: "/" }, { name: "Terms of service", path: "/terms/" }]}
 >
-  <div class="wrap prose">
+  <div class="wrap">
     <header class="page-head">
       <h1>Terms of service</h1>
       <p class="muted">These terms apply to the use of {company.domain.replace("https://", "")}, published by {company.legalName}.</p>
     </header>
+  </div>
+  <Doc>
 
     <h2>Use of the website</h2>
     <p>You may browse this site and use its free tools for personal or business purposes. Do not use them to overload, scrape or interfere with this site or with third-party services.</p>
@@ -37,5 +40,5 @@ import { company } from "../data/company.ts";
 
     <h2>Contact</h2>
     <p>Questions about these terms: <a href={`mailto:${company.email}`}>{company.email}</a>. Company details are on the <a href="/legal/">legal notice</a>.</p>
-  </div>
+  </Doc>
 </Base>

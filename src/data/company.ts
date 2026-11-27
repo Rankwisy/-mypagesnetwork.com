@@ -2,7 +2,7 @@
 // Footer, /legal/, /contact/, /privacy/ and JSON-LD all read from here.
 export const company = {
   legalName: "MYPAGES L.L.C.",
-  brand: "MYPAGES",
+  brand: "MyPages",
   entityType: "Wyoming Limited Liability Company (single-member, member-managed)",
   jurisdiction: "Wyoming, USA",
   stateEntityId: "2026-002031872",

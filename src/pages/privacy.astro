@@ -1,6 +1,7 @@
 ---
 // <!-- REVIEW BY LAWYER -->
 import Base from "../layouts/Base.astro";
+import Doc from "../components/Doc.astro";
 import { company, officeOneLine } from "../data/company.ts";
 const updated = "2026-11-27";
 ---
@@ -9,11 +10,13 @@ const updated = "2026-11-27";
   description="How MYPAGES L.L.C. handles personal data: contact form data, Netlify as processor, no cookies, your GDPR and US privacy rights."
   crumbs={[{ name: "Home", path: "/" }, { name: "Privacy policy", path: "/privacy/" }]}
 >
-  <div class="wrap prose">
+  <div class="wrap">
     <header class="page-head">
       <h1>Privacy policy</h1>
       <p class="muted">Last updated {updated}</p>
     </header>
+  </div>
+  <Doc>
 
     <h2>Data controller</h2>
     <p>{company.legalName}, {officeOneLine}. Contact: <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
@@ -52,5 +55,5 @@ const updated = "2026-11-27";
 
     <h2>Changes</h2>
     <p>We will update this page if our practices change and show the date of the last update at the top.</p>
-  </div>
+  </Doc>
 </Base>

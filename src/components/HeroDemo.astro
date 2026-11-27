@@ -1,0 +1,60 @@
+---
+// Live mini Google Search Simulator. Works without JS: every row is a static link
+// for the default query. The script only enhances the input and plays the intro once.
+import Flag from "./Flag.astro";
+import { simulatorUrl } from "../lib/tools/google.ts";
+import { HERO_MARKETS } from "../data/markets.ts";
+const QUERY = "running shoes";
+---
+<div class="demo" id="demo" data-query={QUERY}>
+  <form id="demo-form" role="search" aria-label="Search the same query in eight markets">
+    <label for="demo-q">Query</label>
+    <input id="demo-q" name="q" type="search" value={QUERY} autocomplete="off" spellcheck="false" />
+  </form>
+  <ul class="demo-rows" aria-live="polite">
+    {HERO_MARKETS.map((m) => (
+      <li>
+        <Flag code={m.flag} eager />
+        <span class="code">{m.code}</span>
+        <span class="lang-code" title={m.langs[0].name}>{m.langs[0].code}</span>
+        <a href={simulatorUrl({ q: QUERY, gl: m.gl, hl: m.langs[0].code })} data-gl={m.gl} data-hl={m.langs[0].code} target="_blank" rel="noopener">Open in Google {m.code}</a>
+      </li>
+    ))}
+  </ul>
+</div>
+<p class="demo-more"><a href="/tools/google-search-simulator/">Full simulator with 25+ countries and devices</a></p>
+
+<script>
+  import { simulatorUrl } from "../lib/tools/google.ts";
+  const demo = document.getElementById("demo")!;
+  const input = document.getElementById("demo-q") as HTMLInputElement;
+  const links = [...demo.querySelectorAll<HTMLAnchorElement>("a[data-gl]")];
+  const rows = [...demo.querySelectorAll("li")];
+  const query = demo.dataset.query ?? "";
+
+  const update = () => {
+    const q = input.value.trim() || query;
+    links.forEach((a) => { a.href = simulatorUrl({ q, gl: a.dataset.gl!, hl: a.dataset.hl! })!; });
+  };
+  input.addEventListener("input", update);
+  document.getElementById("demo-form")!.addEventListener("submit", (e) => { e.preventDefault(); links[0]?.focus(); });
+
+  // The only automatic motion on the site: type the query once, then reveal the rows.
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduce && document.activeElement !== input) {
+    demo.classList.add("typing");
+    input.value = "";
+    let i = 0;
+    const step = 1200 / query.length;
+    const timer = setInterval(() => {
+      const userTookOver = document.activeElement === input;
+      if (!userTookOver) input.value = query.slice(0, ++i);
+      if (userTookOver || i >= query.length) {
+        clearInterval(timer);
+        rows.forEach((r, n) => { (r as HTMLElement).style.animationDelay = `${n * 90}ms`; r.classList.add("in"); });
+        demo.classList.remove("typing");
+        update();
+      }
+    }, step);
+  }
+</script>

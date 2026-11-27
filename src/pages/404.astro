@@ -1,14 +1,15 @@
 ---
 import Base from "../layouts/Base.astro";
+import Result from "../components/Result.astro";
 ---
 <Base title="Page Not Found | MYPAGES" description="This page does not exist or has moved. Find our SEO services, free tools or contact details from here." noindex>
-  <div class="wrap narrow page-head">
-    <h1>Page not found</h1>
-    <p class="lead">The URL may be mistyped, or the page has moved.</p>
-    <ul>
-      <li><a href="/services/">SEO services</a></li>
-      <li><a href="/tools/">Free SEO tools</a></li>
-      <li><a href="/contact/">Contact</a></li>
+  <div class="wrap page-head">
+    <h1>No results for this page</h1>
+    <p class="lead">The address may be mistyped, or the page has moved. These are the closest matches.</p>
+    <ul class="results block">
+      <li><Result href="/services/" title="SEO services" snippet="Technical audits, e-commerce, local and programmatic SEO, links, domains and consulting." terms={["SEO"]} /></li>
+      <li><Result href="/tools/" title="Free SEO tools" snippet="Google search simulator, operator query builder, ads preview and live keyword data." terms={["SEO"]} /></li>
+      <li><Result href="/" title="MyPages home" snippet="SEO and search data for e-commerce and online businesses in 20 countries." terms={["SEO"]} /></li>
     </ul>
   </div>
 </Base>

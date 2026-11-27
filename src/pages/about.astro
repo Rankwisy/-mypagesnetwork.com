@@ -1,26 +1,29 @@
 ---
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
-import { company } from "../data/company.ts";
+import Timeline from "../components/Timeline.astro";
+import { company, officeOneLine } from "../data/company.ts";
 ---
 <Base
   title="About MYPAGES: SEO Practitioners Since 2009"
   description="MYPAGES is an SEO and search data consultancy. Hands-on SEO since 2009, consulting since 2011, for EU and US clients in five languages."
   crumbs={[{ name: "Home", path: "/" }, { name: "About", path: "/about/" }]}
 >
-  <div class="wrap prose">
+  <div class="wrap prose section flush-top">
     <header class="page-head">
       <h1>About MYPAGES</h1>
-      <p class="lead">A small, senior SEO consultancy. The person who audits your site is the person who explains it to you and the person who does the work.</p>
+      <p class="lead">A small, senior SEO consultancy for e-commerce and online businesses. The person who audits your site is the person who explains it to you and the person who does the work.</p>
     </header>
 
-    <h2>Background</h2>
-    <ul class="stats">
-      <li><strong>2009</strong>Started practising SEO on our own sites and client projects.</li>
-      <li><strong>2011</strong>Began working as a freelance SEO consultant.</li>
-      <li><strong>{company.formationDate.slice(0, 4)}</strong>{company.legalName} formed in {company.jurisdiction}.</li>
-      <li><strong>5 languages</strong>English, French, Spanish, Arabic and Dutch.</li>
-    </ul>
+    <h2>Timeline</h2>
+    <Timeline years steps={[
+      { title: "2009", text: "Started practising SEO on our own sites and client projects." },
+      { title: "2011", text: "Began working as a freelance SEO consultant." },
+      { title: company.formationDate.slice(0, 4), text: `${company.legalName} formed in ${company.jurisdiction}.` },
+    ]} />
+
+    <h2>Languages</h2>
+    <p>We work in English, French, Spanish, Arabic and Dutch. Keyword research and content in those languages is done by people who read the results natively, not from a translation of them.</p>
 
     <h2>What we do</h2>
     <p>
@@ -42,6 +45,13 @@ import { company } from "../data/company.ts";
     <p>
       {company.legalName} is a {company.entityType}. It operates alongside its UK affiliate {company.affiliates[0].legalName} and the brands {company.ecosystem.map((e) => e.name).join(", ")}. Full registration details are on the <a href="/legal/">legal notice</a>.
     </p>
+    <dl class="facts">
+      <div><dt>Legal name</dt><dd>{company.legalName}</dd></div>
+      <div><dt>Entity</dt><dd>{company.entityType}</dd></div>
+      <div><dt>Entity ID</dt><dd class="num">{company.stateEntityId}</dd></div>
+      <div><dt>Registered office</dt><dd>{officeOneLine}</dd></div>
+      <div><dt>UK affiliate</dt><dd>{company.affiliates[0].legalName}, {company.affiliates[0].jurisdiction}</dd></div>
+    </dl>
   </div>
   <Cta />
 </Base>

@@ -22,7 +22,7 @@ const FIELDS: { key: QueryField; label: string; ph: string }[] = [
   { key: "backlink", label: "Backlink source (source target)", ph: "e.g. blog.com yourdomain.com" },
 ];
 ---
-<section class="tool" aria-labelledby="qb-h">
+<section class="tool-panel" aria-labelledby="qb-h">
   <h2 id="qb-h">Search Query Builder</h2>
   <form id="qb" role="search" aria-label="Google operator query builder">
     <div class="form-grid">
@@ -33,8 +33,15 @@ const FIELDS: { key: QueryField; label: string; ph: string }[] = [
         </div>
       ))}
     </div>
-    <p class="out-label"><strong>Generated query</strong></p>
-    <output id="qb-out" aria-live="polite">Fill in any field to build a query.</output>
+    <p class="out-label" id="qb-out-h">Generated query</p>
+    <ul class="out-list" aria-labelledby="qb-out-h">
+      <li>
+        <div class="result">
+          <p class="result-title" id="qb-out" aria-live="polite">Fill in any field to build a query.</p>
+          <p class="result-path">google.com › search</p>
+        </div>
+      </li>
+    </ul>
     <div class="actions">
       <button class="btn" type="submit">Search on Google</button>
       <button class="btn secondary" type="button" id="qb-copy">Copy query</button>
@@ -45,9 +52,9 @@ const FIELDS: { key: QueryField; label: string; ph: string }[] = [
 
 <script>
   import { buildQuery, queryUrl, QUERY_FIELDS, type QueryInput } from "../../lib/tools/google.ts";
+  import { copyButton } from "../../lib/copy.ts";
   const form = document.getElementById("qb") as HTMLFormElement;
-  const out = document.getElementById("qb-out") as HTMLOutputElement;
-  const copy = document.getElementById("qb-copy") as HTMLButtonElement;
+  const out = document.getElementById("qb-out") as HTMLElement;
   const read = () => {
     const f = new FormData(form);
     const input: QueryInput = Object.fromEntries(QUERY_FIELDS.map((k) => [k, String(f.get(k) ?? "").trim()]));
@@ -61,15 +68,5 @@ const FIELDS: { key: QueryField; label: string; ph: string }[] = [
     const url = queryUrl(read());
     if (url) window.open(url, "_blank", "noopener");
   });
-  copy.addEventListener("click", async () => {
-    const q = read();
-    if (!q) return;
-    try {
-      await navigator.clipboard.writeText(q);
-      copy.textContent = "Copied";
-    } catch {
-      copy.textContent = "Copy failed, select the text";
-    }
-    setTimeout(() => (copy.textContent = "Copy query"), 2000);
-  });
+  copyButton(document.getElementById("qb-copy") as HTMLButtonElement, read);
 </script>

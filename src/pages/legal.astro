@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import Doc from "../components/Doc.astro";
 import { company, officeOneLine, phoneHref } from "../data/company.ts";
 const rows: [string, string][] = [
   ["Legal name", company.legalName],
@@ -19,11 +20,13 @@ const rows: [string, string][] = [
   description="Legal notice for mypagesnetwork.com: company registration, registered office, contact details, UK affiliate and hosting provider."
   crumbs={[{ name: "Home", path: "/" }, { name: "Legal notice", path: "/legal/" }]}
 >
-  <div class="wrap prose">
+  <div class="wrap">
     <header class="page-head">
       <h1>Legal notice</h1>
       <p class="lead">Information about the publisher of {company.domain.replace("https://", "")}.</p>
     </header>
+  </div>
+  <Doc>
 
     <h2>Publisher</h2>
     <table class="kv">
@@ -61,5 +64,5 @@ const rows: [string, string][] = [
     <p>
       Content on this site is provided for general information. We check it carefully but cannot guarantee it is complete or current. External links are checked when published; we are not responsible for the content of third-party sites. Free tools open public Google pages and are provided as is. See the <a href="/terms/">terms of service</a> and the <a href="/privacy/">privacy policy</a>.
     </p>
-  </div>
+  </Doc>
 </Base>

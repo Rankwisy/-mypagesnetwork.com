@@ -37,12 +37,12 @@ const plausible = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN;
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
     {alternates.length > 0 && [{ lang, path: Astro.url.pathname }, ...alternates].map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
-    <Font cssVariable="--font-sans" preload={[{ weight: "400" }]} />
+    <Font cssVariable="--font-sans" preload />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#0b1f3a" />
+    <meta name="theme-color" content="#0F4392" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />

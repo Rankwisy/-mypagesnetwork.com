@@ -1,15 +1,16 @@
 ---
+// The closing call to action: the one centred block on any page.
 const {
-  heading = "Get a data-backed plan for your site",
-  text = "Tell us what you sell and where you want to rank. You get a written reply with what we would fix first and what it should be worth.",
+  heading = "Tell us where you want to rank",
+  text = "Send your site and your target markets. You get a written reply with what we would fix first and what it should be worth.",
   href = "/contact/",
-  label = "Request a proposal",
+  label = "Get a proposal",
 } = Astro.props;
 ---
-<section class="cta-band">
+<section class="section mist closing" aria-labelledby="closing-h">
   <div class="wrap">
-    <h2>{heading}</h2>
+    <h2 id="closing-h">{heading}</h2>
     <p>{text}</p>
-    <a class="btn" href={href}>{label}</a>
+    <div class="actions"><a class="btn" href={href}>{label}</a></div>
   </div>
 </section>

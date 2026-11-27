@@ -2,79 +2,134 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
-import { company } from "../data/company.ts";
+import Result from "../components/Result.astro";
+import Timeline from "../components/Timeline.astro";
+import HeroDemo from "../components/HeroDemo.astro";
+import Flag from "../components/Flag.astro";
+import { company, officeOneLine } from "../data/company.ts";
+import { markets } from "../data/markets.ts";
 
 const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
 const native = (await getCollection("tools", (t) => t.data.tier === "native")).sort((a, b) => a.data.order - b.data.order);
-const yearsSince2009 = new Date().getFullYear() - 2009;
+// What every service is ultimately judged on; highlighted like query matches.
+const OUTCOMES = ["revenue", "search demand", "search", "buyers", "sell", "authority", "indexed", "cite"];
+const steps = [
+  { title: "Baseline", text: "Search Console, analytics, crawl and order data in one view, so every recommendation starts from a number you already trust." },
+  { title: "Prioritise", text: "Each issue gets an estimated traffic and revenue impact and an effort score. You approve the ranked list before anything is built." },
+  { title: "Ship", text: "We implement, or write tickets your developers can close without a meeting: exact URLs, exact changes, acceptance criteria." },
+  { title: "Measure", text: "Every change is annotated and tracked against the baseline. The monthly report says what moved, what did not and what comes next." },
+];
 ---
 <Base
   title="Data-Driven SEO for E-commerce | MYPAGES"
   description="Technical, e-commerce, local and programmatic SEO for online stores and SMBs. Audits, projects and retainers tied to revenue, not vanity metrics."
 >
   <section class="hero">
-    <div class="wrap">
-      <p class="kicker">SEO and search data consulting</p>
-      <h1>Data-driven SEO for e-commerce and online businesses</h1>
-      <p class="lead">
-        We find the pages, queries and technical faults that sit between your catalogue and the revenue it should earn from search, then fix them in the order that pays back fastest.
-      </p>
-      <div class="actions">
-        <a class="btn" href="/contact/">Request a proposal</a>
-        <a class="btn secondary" href="/services/technical-seo-audit/">Start with an audit</a>
+    <div class="wrap grid-12">
+      <div class="hero-copy">
+        <h1>Rank in every market your customers search in.</h1>
+        <p class="lead">SEO and search data for e-commerce and online businesses in 20 countries. We find what stands between your catalogue and its search revenue, then fix it in the order that pays back first.</p>
+        <div class="actions">
+          <a class="btn" href="/contact/">Get a proposal</a>
+          <a class="btn secondary" href="/services/technical-seo-audit/">Start with an audit</a>
+        </div>
+      </div>
+      <div class="hero-demo-col">
+        <HeroDemo />
       </div>
     </div>
   </section>
 
-  <section class="wrap section" aria-labelledby="services-h">
-    <h2 id="services-h">Services</h2>
-    <p class="muted prose">Ten services, one method: measure first, prioritise by expected revenue, ship, then measure again.</p>
-    <div class="grid">
-      {services.map((s) => (
-        <div class="card">
-          <h3><a href={`/services/${s.id}/`}>{s.data.name}</a></h3>
-          <p>{s.data.summary}</p>
-        </div>
-      ))}
+  <div class="wrap">
+    <div class="trust">
+      <ul>
+        <li><strong class="num">Since 2009</strong> in hands-on SEO</li>
+        <li><strong class="num">{markets.length} markets</strong> in {new Set(markets.flatMap((m) => m.langs.map((l) => l.code))).size} search languages</li>
+        <li><strong>US + UK entities</strong> for contracts and invoicing</li>
+        <li><strong class="num">5 languages</strong> spoken in-house</li>
+      </ul>
     </div>
-  </section>
+  </div>
 
-  <section class="band" aria-labelledby="how-h">
+  <section class="section" aria-labelledby="services-h">
     <div class="wrap">
-      <h2 id="how-h">How we work</h2>
-      <ol class="steps">
-        <li><h3>Baseline</h3><p>We pull Search Console, analytics, crawl and revenue data into one view, so every recommendation starts from a number you already trust.</p></li>
-        <li><h3>Prioritise</h3><p>Each issue gets an estimated traffic and revenue impact and an effort score. You see the ranked list before anything is built.</p></li>
-        <li><h3>Ship</h3><p>We implement directly or write tickets your developers can close without a meeting: exact URLs, exact changes, acceptance criteria.</p></li>
-        <li><h3>Measure</h3><p>Changes are annotated and tracked against the baseline. Monthly reports show what moved, what did not, and what we do next.</p></li>
-      </ol>
+      <div class="intro">
+        <h2 id="services-h">Services</h2>
+        <p>Ten services and one method: measure, rank the work by expected revenue, ship it, measure again. The highlights mark what each one is meant to move.</p>
+      </div>
+      <ul class="results cols">
+        {services.map((s) => (
+          <li><Result href={`/services/${s.id}/`} title={s.data.name} snippet={s.data.summary} terms={OUTCOMES} /></li>
+        ))}
+      </ul>
+      <p class="actions"><a class="text-link" href="/services/">Compare services and engagement models</a></p>
     </div>
   </section>
 
-  <section class="wrap section" aria-labelledby="tools-h">
-    <h2 id="tools-h">Free SEO tools</h2>
-    <p class="muted prose">Browser-based tools we use every week. No account, no tracking.</p>
-    <div class="grid">
-      {native.map((t) => (
-        <div class="card">
-          <span class="tag">Free tool</span>
-          <h3><a href={`/tools/${t.data.slug}/`}>{t.data.h1.split(":")[0]}</a></h3>
-          <p>{t.data.cardText}</p>
-        </div>
-      ))}
+  <section class="section mist" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="intro">
+        <h2 id="how-h">How we work</h2>
+        <p>The same four steps on a two-week audit or a two-year retainer. You see the numbers before we start and after we finish.</p>
+      </div>
+      <Timeline steps={steps} />
     </div>
-    <p><a href="/tools/">See all free SEO tools</a></p>
   </section>
 
-  <section class="wrap section" aria-labelledby="trust-h">
-    <h2 id="trust-h">Who you are dealing with</h2>
-    <ul class="stats">
-      <li><strong>Since 2009</strong>{yearsSince2009}+ years of hands-on SEO, consulting since 2011.</li>
-      <li><strong>{company.legalName}</strong>{company.entityType.split(" (")[0]}, Entity ID {company.stateEntityId}.</li>
-      <li><strong>EU and US clients</strong>Work delivered in English, French, Spanish, Arabic and Dutch.</li>
-      <li><strong>Own data stack</strong>Live keyword, SERP and backlink data through our <a href="https://isearchtrends.com">Isearchtrends</a> platform.</li>
-    </ul>
-    <p><a href="/about/">More about how we work and who we are</a> · <a href="/legal/">Legal notice</a></p>
+  <section class="section deep" aria-labelledby="markets-h">
+    <div class="wrap">
+      <div class="band-head">
+        <h2 id="markets-h">{markets.length} markets, each with its own Google</h2>
+        <p>Each market has its own competitors, search habits and index, so we research, write and report per market. Our working hours overlap CET and US Eastern time.</p>
+      </div>
+      <ul class="market-grid">
+        {markets.map((m) => (
+          <li>
+            <Flag code={m.flag} />
+            <span class="code"><abbr title={m.name}>{m.code}</abbr></span>
+            <span class="langs">{m.langs.map((l) => l.name).join(", ")}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="actions"><a class="text-link" href="/markets/">What we do in each market</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tools-h">
+    <div class="wrap">
+      <div class="intro">
+        <h2 id="tools-h">Free tools</h2>
+        <p>The browser tools we use on client work every week. No account and no tracking: they build Google URLs in your browser and open them in a new tab.</p>
+      </div>
+      <ul class="results">
+        {native.map((t) => (
+          <li>
+            <Result href={`/tools/${t.data.slug}/`} title={t.data.h1.split(":")[0]} snippet={t.data.cardText}>
+              <a class="btn small secondary" href={`/tools/${t.data.slug}/`} aria-label={`Try the ${t.data.h1.split(":")[0]}`}>Try it</a>
+            </Result>
+          </li>
+        ))}
+      </ul>
+      <p class="actions"><a class="text-link" href="/tools/">All free SEO tools, including live keyword and SERP data</a></p>
+    </div>
+  </section>
+
+  <section class="section flush-top" aria-labelledby="entity-h">
+    <div class="wrap">
+      <div class="intro">
+        <h2 id="entity-h">Who you're dealing with</h2>
+        <p>A registered company with a named manager, not an anonymous agency. Full details are in the <a href="/legal/">legal notice</a>.</p>
+      </div>
+      <dl class="facts">
+        <div><dt>Legal name</dt><dd>{company.legalName}</dd></div>
+        <div><dt>Entity</dt><dd>{company.entityType.split(" (")[0]}, entity ID <span class="num">{company.stateEntityId}</span></dd></div>
+        <div><dt>Registered office</dt><dd>{officeOneLine}</dd></div>
+        <div><dt>UK affiliate</dt><dd>{company.affiliates[0].legalName}, company no. <span class="num">{company.affiliates[0].companyNumber}</span></dd></div>
+        <div><dt>Managing member</dt><dd>{company.managingMember}, practising SEO since 2009</dd></div>
+        <div><dt>Data</dt><dd>Keyword, SERP and backlink data from our own platform, <a href="https://isearchtrends.com">Isearchtrends</a></dd></div>
+      </dl>
+      <Fragment set:html="<!-- TODO: real case study -->" />
+    </div>
   </section>
 
   <Cta />

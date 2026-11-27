@@ -1,0 +1,43 @@
+/* Design tokens. The only file with raw colour values. All derived from logo blue #0F4392. */
+:root {
+  --brand: #0f4392;
+  --brand-deep: #0a2c63;
+  --text: #1e2b3c;
+  --muted: #5b6b7f;
+  --paper: #ffffff;
+  --mist: #eef3fa;
+  --mark: #ffd84d;
+  --mark-hover: #ffe27a;
+  --rule: #d3ddeb;
+  --on-deep: #ffffff;
+  --on-deep-muted: #c4d3ea;
+  --rule-deep: #24477f;
+  --input-border: #74859d;
+  --flag-ring: rgb(10 44 99 / 0.12);
+
+  --lift: 0 12px 32px -12px rgb(10 44 99 / 0.28), 0 2px 6px rgb(10 44 99 / 0.08);
+
+  --font: var(--font-sans), "Segoe UI", system-ui, sans-serif;
+  --fs-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.75rem);
+  --fs-h2: clamp(1.75rem, 1.4rem + 1.6vw, 2.75rem);
+  --fs-h3: clamp(1.25rem, 1.15rem + 0.4vw, 1.6rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.875rem;
+
+  --space: 8px;
+  --section: clamp(4rem, 10vw, 8rem);
+  --gutter: 24px;
+  --max: 1240px;
+  --measure: 68ch;
+  --r-control: 8px;
+  --r-panel: 16px;
+  --header-h: 72px;
+}
+
+@media (min-width: 900px) {
+  :root {
+    --gutter: 40px;
+    --fs-display: clamp(3.5rem, 2.6rem + 2.2vw, 4.75rem);
+    --fs-h2: clamp(2.25rem, 1.9rem + 0.8vw, 2.75rem);
+  }
+}

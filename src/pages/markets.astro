@@ -1,0 +1,84 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import Flag from "../components/Flag.astro";
+import { markets, IN_HOUSE_LANGS } from "../data/markets.ts";
+import { simulatorUrl } from "../lib/tools/google.ts";
+
+// One line of market-specific context per market: how search there differs.
+const NOTES: Record<string, string> = {
+  US: "The largest and most competitive index we work in. Spanish-language demand is large enough to deserve its own pages in many categories.",
+  UK: "British spelling, VAT-inclusive pricing and UK delivery terms change both the queries and the snippets that win the click.",
+  CA: "English and French demand side by side; Quebec searchers expect French pages, not a translated fallback.",
+  AU: "A separate index from the UK and US, with local retailers and marketplaces holding many category results.",
+  IE: "Often served UK results; ranking needs clear signals for euro pricing and Irish delivery.",
+  FR: "French-only results for most commercial queries, with strong marketplace and comparison-site competition.",
+  BE: "Dutch and French communities search separately. Each language needs its own pages, hreflang and links.",
+  CH: "German, French and Italian searchers in one market, plus prices in CHF. Language targeting matters more than country targeting.",
+  ES: "Spanish from Spain differs from Latin American Spanish in vocabulary, so keyword research is done per country.",
+  MX: "The biggest Spanish-language market we work in, with its own vocabulary and a strong mobile share.",
+  DE: "High trust thresholds: imprint, reviews and detailed product data weigh heavily in German results.",
+  AT: "German-language results that often include German retailers, so Austrian pages need clear local signals.",
+  NL: "A compact, competitive market where comparison sites and marketplaces take many commercial positions.",
+  IT: "Italian-only results with strong local retailers and a long tail of regional queries.",
+  PT: "European Portuguese queries differ from Brazilian ones, and the results show it.",
+  BR: "A large, mobile-first market with Brazilian Portuguese vocabulary of its own.",
+  PL: "A fast-growing e-commerce market with strong local marketplaces in most categories.",
+  SE: "High online-shopping adoption and price-comparison sites in most product results.",
+  IN: "English-language search dominates commercial queries, with Hindi demand growing on mobile.",
+  ZA: "A smaller English-language index where local delivery and pricing signals decide many category results.",
+};
+const QUERY = "running shoes";
+---
+<Base
+  title="Markets: SEO in 20 Countries and 10 Languages | MYPAGES"
+  description="The 20 markets we do SEO in: search languages, how each Google differs and which services we offer there, from the US and UK to Belgium and Brazil."
+  crumbs={[{ name: "Home", path: "/" }, { name: "Markets", path: "/markets/" }]}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>SEO markets: 20 countries, each with its own Google</h1>
+      <p class="lead">A ranking in one country says little about the next. Each market has its own index, competitors and vocabulary, so we research and report per market.</p>
+    </header>
+
+    <div class="prose">
+      <h2>How we work across markets</h2>
+      <p>
+        Most of our clients sell in more than one country. The same catalogue can rank on page one in France and be invisible in Belgium, because Belgian searchers use different words, see different competitors and are served by a different index. A single global keyword list hides that. We build the keyword research, the technical checks and the reporting per market, then decide where each euro or dollar of effort pays back first.
+      </p>
+      <p>
+        Technical SEO, data work and link building are available in every market below. We write and review content ourselves in English, French, Spanish and Dutch. For the other languages we work from your own native-language copy or brief your writers, and say so in the proposal.
+      </p>
+      <p>
+        You can check any of these markets yourself: each entry links to the localized Google results for "{QUERY}" in that country and language, built with the same function as our free <a href="/tools/google-search-simulator/">Google Search Simulator</a>. Our working hours overlap CET and US Eastern time.
+      </p>
+    </div>
+
+    <section class="block" aria-labelledby="list-h">
+      <h2 id="list-h">The markets</h2>
+      <ul class="results cols">
+        {markets.map((m) => {
+          const inHouse = m.langs.filter((l) => IN_HOUSE_LANGS.has(l.code));
+          return (
+            <li id={m.code.toLowerCase()}>
+              <div class="result">
+                <h3 class="result-title market-title"><Flag code={m.flag} /><a href={`#${m.code.toLowerCase()}`}>{m.name} <span class="num">({m.code})</span></a></h3>
+                <p class="result-path">mypagesnetwork.com › markets #{m.code.toLowerCase()}</p>
+                <p class="result-snippet full">{NOTES[m.code]}</p>
+                <p class="result-meta">
+                  Languages: {m.langs.map((l) => l.name).join(", ")}.
+                  Content: {inHouse.length ? `in-house in ${inHouse.map((l) => l.name).join(" and ")}` : "from your native-language copy"}.
+                  Services: all ten.
+                </p>
+                <div class="result-extra">
+                  <a href={simulatorUrl({ q: QUERY, gl: m.gl, hl: m.langs[0].code })} target="_blank" rel="noopener">Open in Google {m.code}</a>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  </div>
+  <Cta heading="Tell us which markets matter to you" text="List the countries you sell in, or want to. You get a written reply with where you stand in each and what we would fix first." />
+</Base>

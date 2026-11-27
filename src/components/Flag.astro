@@ -1,0 +1,5 @@
+---
+// 4:3 flags from flag-icons (MIT, public/flags/LICENSE.txt). Decorative: the country code is always shown next to it.
+const { code, eager = false } = Astro.props as { code: string; eager?: boolean };
+---
+<img class="flag" src={`/flags/${code}.svg`} width="24" height="18" alt="" loading={eager ? "eager" : "lazy"} decoding="async" />
