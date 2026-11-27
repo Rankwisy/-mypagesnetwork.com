@@ -2,6 +2,7 @@
 // Runs first in `npm run build`; Node strips the TS types natively.
 import assert from "node:assert/strict";
 import { simulatorUrl, buildQuery, queryUrl, adMatrix } from "../src/lib/tools/google.ts";
+import { pathLine, highlight } from "../src/lib/result.ts";
 
 const G = "https://www.google.com/search?";
 
@@ -28,5 +29,15 @@ assert.equal(m.length, 4);
 assert.equal(m[0].url, G + "q=Fast+Shoes+Sale&gl=US");
 assert.equal(m[3].url, G + "q=Buy+Now+%26+Save&gl=GB");
 assert.deepEqual(adMatrix([{ headline: "", description: "" }], tests), []);
+
+// Result-entry helpers (path line and snippet highlighting)
+assert.equal(pathLine("/services/local-seo/"), "mypagesnetwork.com › services › local-seo");
+assert.equal(pathLine("/"), "mypagesnetwork.com");
+assert.equal(pathLine("https://www.isearchtrends.com/seo-tool?x=1"), "isearchtrends.com › seo-tool");
+assert.deepEqual(highlight("Local SEO for local shops (SEO).", ["seo", "local seo"]), [
+  { text: "Local SEO", hit: true }, { text: " for local shops (", hit: false }, { text: "SEO", hit: true }, { text: ").", hit: false },
+]);
+assert.deepEqual(highlight("a+b c", ["a+b"]), [{ text: "a+b", hit: true }, { text: " c", hit: false }]);
+assert.deepEqual(highlight("plain", []), [{ text: "plain", hit: false }]);
 
 console.log("check-tools: all tool URL checks passed");

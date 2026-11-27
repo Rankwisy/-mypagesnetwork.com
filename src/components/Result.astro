@@ -1,0 +1,20 @@
+---
+// A search-result style entry: title link, URL path line, two-line snippet.
+// `terms` are highlighted in the snippet the way a search engine marks query matches.
+import { highlight, pathLine } from "../lib/result.ts";
+interface Props {
+  href: string;
+  title: string;
+  snippet?: string;
+  terms?: string[];
+  full?: boolean;
+  as?: "h2" | "h3";
+}
+const { href, title, snippet = "", terms = [], full = false, as: H = "h3" } = Astro.props;
+---
+<div class="result">
+  <H class="result-title"><a href={href}>{title}</a></H>
+  <p class="result-path">{pathLine(href)}</p>
+  {snippet && <p class:list={["result-snippet", { full }]}>{highlight(snippet, terms).map((p) => (p.hit ? <mark>{p.text}</mark> : p.text))}</p>}
+  {Astro.slots.has("default") && <div class="result-extra"><slot /></div>}
+</div>

@@ -1,0 +1,6 @@
+---
+// Traced "MyPages" wordmark (public/brand/wordmark.svg, matched against the PNG at 400%).
+// Colour comes from `color` on a parent: brand blue in the header, white on --brand-deep.
+const { label = "MyPages" } = Astro.props as { label?: string };
+---
+<svg class="logo" viewBox="0 0 358 61" width="140" height="24" role="img" aria-label={label}><use href="/brand/wordmark.svg#w" /></svg>

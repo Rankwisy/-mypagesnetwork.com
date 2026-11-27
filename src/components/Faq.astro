@@ -1,7 +1,7 @@
 ---
 const { items, heading = "Frequently asked questions" } = Astro.props as { items: { q: string; a: string }[]; heading?: string };
 ---
-<section class="section faq" aria-labelledby="faq-h">
+<section class="faq" aria-labelledby="faq-h">
   <h2 id="faq-h">{heading}</h2>
   {items.map((f) => (
     <details>

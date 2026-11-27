@@ -1,7 +1,7 @@
 ---
 import { COUNTRIES, LANGUAGES, DEVICES } from "../../lib/tools/google.ts";
 ---
-<section class="tool" aria-labelledby="sim-h">
+<section class="tool-panel" aria-labelledby="sim-h">
   <h2 id="sim-h">Google Search Simulator</h2>
   <form id="sim" role="search" aria-label="Google search simulator">
     <div class="field">
@@ -27,36 +27,68 @@ import { COUNTRIES, LANGUAGES, DEVICES } from "../../lib/tools/google.ts";
       </div>
     </div>
     <div class="field"><label class="check"><input type="checkbox" name="safe" /> SafeSearch on</label></div>
-    <p class="hint" id="sim-device-hint" hidden>Google picks the layout from your browser, not the URL. For a true mobile or tablet SERP, open the result with your browser's device emulation (F12, then the device toolbar).</p>
-    <p class="out-label"><strong>Generated URL</strong></p>
-    <output id="sim-out" aria-live="polite">Type a query to build the URL.</output>
-    <div class="actions"><button class="btn" type="submit">Open in Google</button></div>
+    <p class="hint" id="sim-device-hint" hidden>Google picks the layout from your browser, not the URL. For a true mobile or tablet results page, open the link with your browser's device emulation (F12, then the device toolbar).</p>
+    <div class="actions"><button class="btn" type="submit" id="sim-go">Open in Google</button></div>
   </form>
+  <p class="out-label" id="sim-out-h">Generated search</p>
+  <ul class="out-list" id="sim-out" aria-labelledby="sim-out-h" aria-live="polite">
+    <li><p class="out-empty">Type a query to build the URL.</p></li>
+  </ul>
 </section>
 
 <script>
-  import { simulatorUrl } from "../../lib/tools/google.ts";
+  import { simulatorUrl, COUNTRIES } from "../../lib/tools/google.ts";
+  import { pathLine } from "../../lib/result.ts";
+  import { copyButton } from "../../lib/copy.ts";
   const form = document.getElementById("sim") as HTMLFormElement;
-  const out = document.getElementById("sim-out") as HTMLOutputElement;
+  const out = document.getElementById("sim-out") as HTMLUListElement;
   const hint = document.getElementById("sim-device-hint") as HTMLElement;
+  const go = document.getElementById("sim-go") as HTMLButtonElement;
+  const country = (c: string) => COUNTRIES.find(([k]) => k === c)?.[1] ?? c;
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = "", text = "") => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    n.textContent = text;
+    return n;
+  };
+
   const read = () => {
     const f = new FormData(form);
-    return simulatorUrl({
-      q: String(f.get("q") ?? ""),
-      gl: String(f.get("gl")),
-      hl: String(f.get("hl")),
-      num: Number(f.get("num")),
-      safe: f.get("safe") === "on",
-    });
+    const gl = String(f.get("gl"));
+    const url = simulatorUrl({ q: String(f.get("q") ?? ""), gl, hl: String(f.get("hl")), num: Number(f.get("num")), safe: f.get("safe") === "on" });
+    return { url, gl, q: String(f.get("q") ?? "").trim() };
   };
-  const update = () => {
-    out.textContent = read() ?? "Type a query to build the URL.";
+
+  const render = () => {
+    const { url, gl, q } = read();
     hint.hidden = new FormData(form).get("device") === "desktop";
+    go.textContent = `Open in Google ${country(gl)}`;
+    if (!url) {
+      const empty = el("li");
+      empty.append(el("p", "out-empty", "Type a query to build the URL."));
+      out.replaceChildren(empty);
+      return;
+    }
+    const entry = el("div", "result");
+    const title = el("p", "result-title");
+    const a = el("a", "", `${q}, as searched in ${country(gl)}`);
+    a.href = url; a.target = "_blank"; a.rel = "noopener";
+    title.append(a);
+    const extra = el("div", "result-extra");
+    const copy = el("button", "btn small secondary", "Copy URL");
+    copy.type = "button";
+    copyButton(copy, () => url);
+    extra.append(copy);
+    entry.append(title, el("p", "result-path", pathLine(url)), el("p", "result-snippet full", url), extra);
+    const li = el("li");
+    li.append(entry);
+    out.replaceChildren(li);
   };
-  form.addEventListener("input", update);
+  form.addEventListener("input", render);
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const url = read();
+    const { url } = read();
     if (url) window.open(url, "_blank", "noopener");
   });
+  render();
 </script>

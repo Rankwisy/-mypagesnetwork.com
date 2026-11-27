@@ -1,4 +1,5 @@
 ---
+import Logo from "./Logo.astro";
 import { company, officeOneLine, phoneHref } from "../data/company.ts";
 import { getCollection } from "astro:content";
 const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
@@ -7,8 +8,8 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <div>
-      <p class="wordmark light">MY<span>PAGES</span></p>
-      <p>Data-driven SEO for e-commerce and online businesses.</p>
+      <Logo />
+      <p>SEO and search data for e-commerce and online businesses in 20 markets.</p>
       <p><a href={`mailto:${company.email}`}>{company.email}</a><br /><a href={phoneHref}>{company.phone}</a></p>
     </div>
     <nav aria-label="Services">
@@ -19,9 +20,9 @@ const year = new Date().getFullYear();
       <p class="footer-h">Company</p>
       <ul>
         <li><a href="/tools/">Free SEO tools</a></li>
+        <li><a href="/markets/">Markets</a></li>
         <li><a href="/about/">About</a></li>
         <li><a href="/contact/">Contact</a></li>
-        <li><a href="/legal/">Legal notice</a></li>
         <li><a href="/privacy/">Privacy policy</a></li>
         <li><a href="/terms/">Terms of service</a></li>
       </ul>
@@ -32,8 +33,12 @@ const year = new Date().getFullYear();
     </nav>
   </div>
   <div class="wrap legal-line">
-    <p>
-      © {year} {company.legalName} · Wyoming LLC · Entity ID {company.stateEntityId} · Registered office: {officeOneLine} · <a href="/legal/">Legal notice</a>
-    </p>
+    <ul>
+      <li>© {year} {company.legalName}</li>
+      <li>Wyoming LLC</li>
+      <li>Entity ID <span class="num">{company.stateEntityId}</span></li>
+      <li>Registered office: {officeOneLine}</li>
+      <li><a href="/legal/">Legal notice</a></li>
+    </ul>
   </div>
 </footer>

@@ -1,0 +1,21 @@
+---
+// Document layout for legal pages: 68ch text with a sticky table of contents built
+// from the slot's <h2>s (ids added here, so pages keep plain headings).
+const html = await Astro.slots.render("default");
+const toc: { id: string; text: string }[] = [];
+const body = html.replace(/<h2([^>]*)>([\s\S]*?)<\/h2>/g, (_, attrs: string, inner: string) => {
+  const text = inner.replace(/<[^>]+>/g, "").trim();
+  const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  toc.push({ id, text });
+  return `<h2${attrs} id="${id}">${inner}</h2>`;
+});
+---
+<div class="wrap grid-12 section flush-top">
+  <aside class="toc">
+    <nav aria-label="On this page">
+      <p>On this page</p>
+      <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.text}</a></li>)}</ol>
+    </nav>
+  </aside>
+  <div class="doc prose"><Fragment set:html={body} /></div>
+</div>

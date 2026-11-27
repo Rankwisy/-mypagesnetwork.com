@@ -2,11 +2,13 @@
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Faq from "../../components/Faq.astro";
+import Flag from "../../components/Flag.astro";
 import GoogleSearchSimulator from "../../components/tools/GoogleSearchSimulator.astro";
 import SearchQueryBuilder from "../../components/tools/SearchQueryBuilder.astro";
 import AdsAbTest from "../../components/tools/AdsAbTest.astro";
 import { softwareApp, faqPage } from "../../lib/schema.ts";
-import { isearchtrends, MARKETS } from "../../data/nav.ts";
+import { isearchtrends } from "../../data/nav.ts";
+import { markets } from "../../data/markets.ts";
 
 // English routes only. For /fr/, /es/, /nl/ add src/pages/[lang]/tools/[slug].astro
 // that filters tools by data.lang and passes `alternates` to Base for hreflang.
@@ -34,8 +36,7 @@ const shortName = d.h1.split(":")[0];
   schema={[softwareApp(shortName, d.description, path), faqPage(d.faq)]}
 >
   <div class="wrap">
-    <header class="page-head">
-      <p class="kicker">{d.tier === "native" ? "Free tool · runs in your browser" : "Free tool · live data on Isearchtrends"}</p>
+    <header class="page-head tool-head">
       <h1>{d.h1}</h1>
       <p class="lead">{d.description}</p>
       {d.tier === "landing" && (
@@ -45,31 +46,43 @@ const shortName = d.h1.split(":")[0];
 
     {Tool && <Tool />}
 
-    <article class="prose">
+    <article class="prose block">
       <Content />
     </article>
 
     {d.tier === "landing" && (
-      <section class="section" aria-labelledby="markets">
+      <section class="block" aria-labelledby="markets">
         <h2 id="markets">Markets covered</h2>
-        <p>{MARKETS.length} markets, each with its own local Google index: {MARKETS.join(", ")}.</p>
-        <a class="btn" href={ist}>Run it on Isearchtrends</a>
+        <p class="measure">{markets.length} markets, each with its own local Google index.</p>
+        <ul class="market-grid light">
+          {markets.map((m) => (
+            <li><Flag code={m.flag} /><span class="code"><abbr title={m.name}>{m.code}</abbr></span><span class="langs">{m.langs.map((l) => l.name).join(", ")}</span></li>
+          ))}
+        </ul>
+        <div class="actions"><a class="btn" href={ist}>Run it on Isearchtrends</a></div>
       </section>
     )}
+  </div>
 
-    <div class="upsells">
-      <div class="card">
-        <span class="tag">Want us to fix it?</span>
-        <h3><a href={`/services/${upsell.id}/`}>{upsell.data.name}</a></h3>
-        <p>{upsell.data.summary}</p>
+  <section class="upsell-band" aria-labelledby="upsell-h">
+    <div class="wrap grid-12">
+      <div class="upsell-main">
+        <h2 id="upsell-h">Want us to fix it?</h2>
+        <p>The tool shows you the problem. We fix it. {upsell.data.name}: {upsell.data.summary}</p>
+        <div class="actions">
+          <a class="btn" href={`/contact/?service=${upsell.id}`}>Get a proposal</a>
+          <a class="text-link" href={`/services/${upsell.id}/`}>More on {upsell.data.name}</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Go deeper with live data</span>
-        <h3><a href={ist}>Isearchtrends SEO tool</a></h3>
-        <p>Keyword volumes, live SERPs, domain traffic and backlinks across 20 markets, from our sister platform.</p>
+      <div class="upsell-side">
+        <p><strong>Go deeper with live data</strong></p>
+        <p>Keyword volumes, live SERPs, domain traffic and backlinks across 20 markets on our sister platform.</p>
+        <a href={ist}>Open Isearchtrends</a>
       </div>
     </div>
+  </section>
 
+  <div class="wrap section flush-top">
     <Faq items={d.faq} />
   </div>
 </Base>

@@ -21,14 +21,14 @@ export default defineConfig({
   },
   fonts: [
     {
-      name: "Inter",
+      name: "Schibsted Grotesk",
       cssVariable: "--font-sans",
       provider: fontProviders.fontsource(),
-      weights: [400, 700],
+      weights: ["400 800"],
       styles: ["normal"],
       subsets: ["latin"],
       display: "swap",
-      fallbacks: ["system-ui", "sans-serif"],
+      fallbacks: ["Segoe UI", "system-ui", "sans-serif"],
     },
   ],
   integrations: [

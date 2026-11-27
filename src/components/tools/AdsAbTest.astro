@@ -3,7 +3,7 @@ import { AD_COUNTRIES, DEVICES, HEADLINE_MAX, DESCRIPTION_MAX } from "../../lib/
 const VARIATIONS = 3;
 const TESTS = 3;
 ---
-<section class="tool" aria-labelledby="ab-h">
+<section class="tool-panel" aria-labelledby="ab-h">
   <h2 id="ab-h">Google Ads Preview and A/B Test</h2>
   <form id="ab" aria-label="Google Ads A/B test configuration">
     <h3>Ad variations</h3>
@@ -42,14 +42,15 @@ const TESTS = 3;
     </div>
   </form>
 
-  <h3>Test matrix</h3>
-  <p class="hint">Each cell opens the live Google results page for that headline in that market, so you can see which ads and listings yours would compete with. Device is a label for your notes: switch your browser to device emulation for mobile layouts.</p>
-  <div class="table-scroll" id="ab-matrix" aria-live="polite"><p class="hint">Write at least one headline to build the matrix.</p></div>
+  <h3 id="ab-out-h">Test matrix</h3>
+  <p class="hint">Each entry opens the live Google results page for that headline in that market, so you can see which ads and listings yours would compete with. Device is a label for your notes: switch your browser to device emulation for mobile layouts.</p>
+  <ul class="out-list" id="ab-matrix" aria-labelledby="ab-out-h" aria-live="polite"><li><p class="out-empty">Write at least one headline to build the matrix.</p></li></ul>
   <div class="actions"><button class="btn" type="button" id="ab-all" disabled>Open all tests</button></div>
 </section>
 
 <script>
   import { adMatrix, AD_COUNTRIES, type AdVariation, type AdTest } from "../../lib/tools/google.ts";
+  import { copyButton } from "../../lib/copy.ts";
   const form = document.getElementById("ab") as HTMLFormElement;
   const box = document.getElementById("ab-matrix") as HTMLElement;
   const all = document.getElementById("ab-all") as HTMLButtonElement;
@@ -77,32 +78,44 @@ const TESTS = 3;
     const cells = adMatrix(variations, tests);
     all.disabled = cells.length === 0;
     if (!cells.length) {
-      box.replaceChildren(el("p", "Write at least one headline and pick a location to build the matrix."));
+      const empty = el("li");
+      empty.append(el("p", "Write at least one headline and pick a location to build the matrix."));
+      empty.firstElementChild!.className = "out-empty";
+      box.replaceChildren(empty);
       return;
     }
-    const table = el("table");
-    table.className = "matrix";
-    const head = el("tr");
-    head.append(el("th", "Ad variation"), ...tests.map((t) => el("th", `${country(t.location)} · ${t.device}`)));
-    table.append(head);
-    variations.forEach((v, vi) => {
-      if (!v.headline) return;
-      const row = el("tr");
-      const label = el("td");
-      label.append(el("strong", v.headline), el("br"), document.createTextNode(v.description));
-      row.append(label);
-      cells.filter((c) => c.variation === vi).forEach((c) => {
-        const td = el("td");
-        const a = el("a", "Open test");
-        a.href = c.url;
-        a.target = "_blank";
-        a.rel = "noopener";
-        td.append(a);
-        row.append(td);
-      });
-      table.append(row);
-    });
-    box.replaceChildren(table);
+    box.replaceChildren(...cells.map((c) => {
+      const v = variations[c.variation];
+      const t = tests[c.test];
+      const entry = el("div");
+      entry.className = "result";
+      const title = el("p");
+      title.className = "result-title";
+      const a = el("a", `${String.fromCharCode(65 + c.variation)}: ${v.headline}`);
+      a.href = c.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      title.append(a);
+      const path = el("p", `${country(t.location)}, ${t.device}`);
+      path.className = "result-path";
+      entry.append(title, path);
+      if (v.description) {
+        const snip = el("p", v.description);
+        snip.className = "result-snippet";
+        entry.append(snip);
+      }
+      const extra = el("div");
+      extra.className = "result-extra";
+      const copy = el("button", "Copy URL");
+      copy.className = "btn small secondary";
+      copy.type = "button";
+      copyButton(copy, () => c.url);
+      extra.append(copy);
+      entry.append(extra);
+      const li = el("li");
+      li.append(entry);
+      return li;
+    }));
   };
 
   form.addEventListener("input", render);
